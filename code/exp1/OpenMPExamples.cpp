@@ -68,14 +68,24 @@ void OpenMPExamples::sample3() {
 }
 
 void OpenMPExamples::sample4() {
+    omp_set_dynamic(0);
+    omp_set_num_threads(8);
+    #pragma omp parallel
+    printf("Num of Threads Inside Parallel Region : %d \n",omp_get_num_threads());
+
+
     clock_t start_time = clock();
     int i=0;
     int j =0;
-    int n=50000;
+    int n=100000;
+    cout << "Num of Threads Outside Parallel Region : " << omp_get_num_threads() <<endl;
     int *a = new int[n];
-#pragma omp parallel for private(i,j) shared(a)
+
+
+
+    #pragma omp parallel for private(i,j) shared(a)
     for(i=0; i <n; i++){
-        for (int j = 0; j < n; ++j) {
+        for (j = 0; j < n; ++j) {
             a[i] = calculate(n,i);
         }
 
@@ -87,7 +97,7 @@ void OpenMPExamples::sample4() {
     clock_t start_time2 = clock();
 
     for(i=0; i <n; i++){
-        for (int j = 0; j < n; ++j) {
+        for (j = 0; j < n; ++j) {
             a[i] = calculate(n,i);
         }
         //printf("%d ",a[i]);
