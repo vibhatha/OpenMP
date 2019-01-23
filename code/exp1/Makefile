@@ -4,8 +4,8 @@ PROG = openmP
 OBJ = main.o OpenMPExamples.o
 
 #flags.
-CC = g++ -fopenmp
-LFLAG =
+CC = g++ -fopenmp -std=c++11
+LFLAG = -g
 CFLAG = -c
 OFLAG = -o
 

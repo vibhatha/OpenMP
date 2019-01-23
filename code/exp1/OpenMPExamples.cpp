@@ -209,7 +209,7 @@ void OpenMPExamples::sample7() {
     }
     pi = step * sum;
     double t2 = omp_get_wtime();
-    cout << "Sequential PI Est : " << pi << ", Time Taken : " << (t2-t1) << endl;
+    cout << "Sequential : PI Est : " << pi << ", Time Taken : " << (t2-t1) << endl;
 }
 
 void OpenMPExamples::sample8() {
@@ -230,206 +230,179 @@ void OpenMPExamples::sample8() {
 }
 
 void OpenMPExamples::sample9() {
+    int itr = 100;
+    int n = 100000;
+    const int d = 3;
+    double** x;
+    double alpha = 0.001;
+    double* w = new double [d];
+    double* y = new double[n];
 
+    //initialize
+    x = new double *[n];
+    for (int i = 0; i < n; ++i) {
+        x[i] = new double[d];
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < d; ++j) {
+            x[i][j] = i * j;
+        }
+    }
+
+    for (int k = 0; k < d; ++k) {
+        w[k] = 0;
+    }
+
+    for (int l = 0; l < n; ++l) {
+        if(l%2==0) {
+            y[l] = 1;
+        } else {
+            y[l] = -1;
+        }
+    }
+
+    double *x1 = new double [d];
+    double *x1y1 = new double [d];
+    double y1 = 0;
+    double start_time = omp_get_wtime();
+    for (int m = 0; m < itr; ++m) {
+        for (int i = 0; i < n; ++i) {
+            x1 = x[i];
+
+            y1 = y[i];
+
+            for (int j = 0; j < d; ++j) {
+                x1y1[j] = x1[j] * y1;
+            }
+
+            for (int k = 0; k < d; ++k) {
+                w[k] = w[k] - alpha * x1y1[k];
+            }
+           // printVector(w, d);
+        }
+       // cout << "---------------------------" << endl;
+    }
+    double end_time = omp_get_wtime();
+    cout << " Weight : ";
+    for (int i1 = 0; i1 < d; ++i1) {
+        cout << w[i1] << " ";
+    }
+    cout << endl;
+    cout << "Sequential : Time Taken : " << (end_time - start_time) << " s" << endl;
 }
 
 void OpenMPExamples::sample10() {
+    omp_set_num_threads(2);
+    int itr = 100;
+    int n = 100000;
+    const int d = 3;
+    double** x;
+    double alpha = 0.001;
+    double* w = new double [d];
+    double* y = new double[n];
 
+    //initialize
+    x = new double *[n];
+    for (int i = 0; i < n; ++i) {
+        x[i] = new double[d];
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < d; ++j) {
+            x[i][j] = i * j;
+        }
+    }
+
+    for (int k = 0; k < d; ++k) {
+        w[k] = 0;
+    }
+
+    for (int l = 0; l < n; ++l) {
+        if(l%2==0) {
+            y[l] = 1;
+        } else {
+            y[l] = -1;
+        }
+    }
+
+    double *x1 = new double [d];
+    double *x1y1 = new double [d];
+    double y1 = 0;
+    double start_time = omp_get_wtime();
+
+    for (int m = 0; m < itr; ++m) {
+        for (int i = 0; i < n; ++i) {
+            x1 = x[i];
+
+            y1 = y[i];
+
+            dotProduct(x1, y1, x1y1, d);
+            /*for (int j = 0; j < d; ++j) {
+                x1y1[j] = x1[j] * y1;
+            }*/
+
+            for (int k = 0; k < d; ++k) {
+                w[k] = w[k] - alpha * x1y1[k];
+            }
+            // printVector(w, d);
+        }
+        // cout << "---------------------------" << endl;
+    }
+    double end_time = omp_get_wtime();
+    cout << " Weight : ";
+    for (int i1 = 0; i1 < d; ++i1) {
+        cout << w[i1] << " ";
+    }
+    cout << endl;
+    cout << "Parallel : Time Taken : " << (end_time - start_time) << " s" << endl;
+}
+
+void OpenMPExamples::printVector(double *v, int size) {
+    for (int i = 0; i < size; ++i) {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+
+void OpenMPExamples::sample11(int num_threads) {
+    omp_set_num_threads(num_threads);
+    int d = 254;
+    int par = 2;
+    int samples = 270000;
+    int itz = samples/par;
+    double *a = new double [d];
+    double b = 10;
+    double start_time = omp_get_wtime();
+    int id = 0;
+    int i,j,k;
+#pragma omp parallel private(i,j,k) shared(itz)
+ {
+     #pragma omp barrier
+     for (j = 0; j < 1000 ; ++j) {
+        #pragma omp barrier
+         for (k = 0; k < itz; ++k) {
+            #pragma omp for
+             for (i = 0; i < d; ++i) {
+                 a[i] = i*b;
+             }
+        #pragma omp barrier
+         }
+     #pragma omp barrier
+     }
+
+ }
+    double end_time = omp_get_wtime();
+
+    cout << "Time Taken : " << (end_time - start_time) << " s " << endl;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void OpenMPExamples::dotProduct(double *a, double b, double *ans, int size) {
+    #pragma omp parallel for private(ans, a, b) shared(size)
+    for (int j = 0; j < size; ++j) {
+        ans[j] = a[j] * b;
+    }
+}
 
 

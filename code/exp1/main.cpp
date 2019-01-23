@@ -2,12 +2,22 @@
 #include "OpenMPExamples.h"
 #include <omp.h>
 #include<stdio.h>
+#include <sstream>
+#include <string>
 
-int main() {
-    omp_set_num_threads(4);
-    std::cout << "Hello, World!" << std::endl;
+using namespace std;
+
+int main(int argc, char** argv) {
+    int num_threads;
+    if(argc>1) {
+        num_threads = stoi(argv[1]);
+    }
+
+    omp_set_num_threads(num_threads);
+    cout << "Number of threads : " << num_threads << endl;
     OpenMPExamples openMPExamples;
-    openMPExamples.sample5();
-    openMPExamples.sample6();
+    //openMPExamples.sample7();
+    //openMPExamples.sample8();
+    openMPExamples.sample11(num_threads);
     return 0;
 }

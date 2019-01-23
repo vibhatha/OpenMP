@@ -19,6 +19,14 @@ public:
     void sample8();
     void sample9();
     void sample10();
+    void sample11(int num_threads);
+    void sample12();
+    void sample13();
+    void sample14();
+    void sample15();
+    void printVector(double* v, int size);
+    void dotProduct(double *a, double b, double *ans, int size);
+
 
 };
 
